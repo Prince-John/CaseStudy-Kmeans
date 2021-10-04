@@ -130,12 +130,12 @@ end
 % the vector and the assigned centroid.
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
-    norms = zeros(length(centroids));
-    for i = 1:length(centroids)
-        norms(i) = norm(data -cetroid(i));
+    index = 1;
+    for centroid = centroids
+        if norm(data-cetroid)
+            
+        end
     end
-    [vec_distance, index] = min(norms);
-    return;
 end
 
 
