@@ -143,9 +143,17 @@ end
 % This function takes the set of training images and the value of k.
 % It returns a new set of centroids based on the current assignment of the
 % training images.
-
 function new_centroids=update_Centroids(data,K)
 
-% FILL THIS IN
+    new_centroids = zeros(k, 784);
+     
+    
+    for i =i:k
+        
+      centroid_vectors = data((data(:, 785)==i), 1:784); 
+      new_centroids(i) = mean(centroid_vectors);  
+    end
+    
 
 end
+ 
