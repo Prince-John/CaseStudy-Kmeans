@@ -62,8 +62,8 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-%k= ; % set k
-%max_iter= ; % set the number of iterations of the algorithm
+k= 9; % set k
+max_iter= 20; % set the number of iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
 % function, which is specified further down this file.
@@ -76,17 +76,26 @@ cost_iteration = zeros(max_iter, 1);
 
 %% This for-loop enacts the k-means algorithm
 
+training_size = size(train,1);
+
 for iter=1:max_iter
     
-      % FILL THIS IN!
+    %assinging centroids to all the vectors
+    for i = 1:training_size
+        [centroid_index, dist] = assign_vector_to_centroid(train(i,:),centroids);
+        train(i,785)= centroid_index;
+        cost_iteration(iter) = cost_iteration(iter)+ dist;
+    end
+    cost_iteration(iter) = cost_iteration(iter)/training_size;  
     
+    centroids = update_Centroids(train, k);
 end
 
 %% This section of code plots the k-means cost as a function of the number
 % of iterations
 
 figure;
-% FILL THIS IN!
+plot(cost_iteration); 
 
 
 %% This next section of code will make a plot of all of the centroids
@@ -105,6 +114,19 @@ for ind=1:k
     
     imagesc(reshape(centr,[28 28])');
     title(strcat('Centroid ',num2str(ind)))
+
+end
+
+
+%% Testing
+
+a = train(train(:,785)==4,:)
+figure;
+colormap('gray');
+plotsize = ceil(20);
+for i = 1:20
+testimage = reshape(a(1,[1:784]), [28 28]);
+
 
 end
 
@@ -130,9 +152,9 @@ end
 % the vector and the assigned centroid.
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
-    norms = zeros(length(centroids));
-    for i = 1:length(centroids)
-        norms(i) = norm(data -cetroid(i));
+    norms = zeros(size(centroids,1),1);
+    for i = 1:size(centroids,1)
+        norms(i) = norm(data -centroids(i,:))^2;
     end
     [vec_distance, index] = min(norms);
     return;
@@ -145,13 +167,12 @@ end
 % training images.
 function new_centroids=update_Centroids(data,K)
 
-    new_centroids = zeros(k, 784);
-     
-    
-    for i =i:k
+    new_centroids = zeros(K, 785);
+         
+    for i = 1:K
         
-      centroid_vectors = data(data(:, 785)==i), 1:784); 
-      new_centroids(i) = mean(centroid_vectors);  
+      centroid_vectors = data((data(:, 785)==i), 1:784); 
+      new_centroids(i,:) = [mean(centroid_vectors) 0];  
     end
     
 
