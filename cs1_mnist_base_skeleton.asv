@@ -1,6 +1,10 @@
 
 clear all;
 close all;
+%%
+
+c0 = reshape(imread('generated_centroids/0.bmp').', 1, []);
+
 
 %% In this script, you need to implement three functions as part of the k-means algorithm.
 % These steps will be repeated until the algorithm converges:
@@ -62,7 +66,7 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k= 9; % set k
+k= 15; % set k
 max_iter= 20; % set the number of iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
@@ -107,6 +111,7 @@ colormap('gray');
 
 plotsize = ceil(sqrt(k));
 
+
 for ind=1:k
     
     centr=centroids(ind,[1:784]);
@@ -125,8 +130,10 @@ figure;
 colormap('gray');
 plotsize = ceil(20);
 for i = 1:20
-testimage = reshape(a(1,[1:784]), [28 28]);
-
+  centr= a(i,:);
+  subplot(plotsize,plotsize,i);
+    
+  imagesc(reshape(centr,[28 28])');
 
 end
 
@@ -136,16 +143,28 @@ end
 % ***Feel free to experiment.***
 % Note that this function takes two inputs and emits one output (y).
 
+
+    
 function y=initialize_centroids(data,num_centroids)
+    centroid_type = "default";
 
-random_index=randperm(size(data,1));
+    if centroid_type == "default"
+        random_index=randperm(size(data,1));
 
-centroids=data(random_index(1:num_centroids),:);
+        centroids=data(random_index(1:num_centroids),:);
 
-y=centroids;
+        y=centroids;
 
+    elseif centroid_type == "custom_"
+        imagefiles = dir('generated_centroids\*.bmp');      
+        nfiles = length(imagefiles);    % Number of files found
+        for ii=1:nfiles
+           currentfilename = imagefiles(ii).name;
+           currentimage = imread(currentfilename);
+           images{ii} = currentimage;
+        end
+    end
 end
-
 %% Function to pick the Closest Centroid using norm/distance
 % This function takes two arguments, a vector and a set of centroids
 % It returns the index of the assigned centroid and the distance between

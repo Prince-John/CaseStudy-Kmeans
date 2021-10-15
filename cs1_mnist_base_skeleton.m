@@ -1,6 +1,10 @@
 
 clear all;
 close all;
+%%
+
+%c0 = reshape(imread('generated_centroids/0.bmp').', 1, []);
+
 
 %% In this script, you need to implement three functions as part of the k-means algorithm.
 % These steps will be repeated until the algorithm converges:
@@ -107,6 +111,7 @@ colormap('gray');
 
 plotsize = ceil(sqrt(k));
 
+
 for ind=1:k
     
     centr=centroids(ind,[1:784]);
@@ -138,16 +143,31 @@ end
 % ***Feel free to experiment.***
 % Note that this function takes two inputs and emits one output (y).
 
+
+    
 function y=initialize_centroids(data,num_centroids)
+    centroid_type = "custom_generated_10";
 
-random_index=randperm(size(data,1));
+    if centroid_type == "default"
+        random_index=randperm(size(data,1));
 
-centroids=data(random_index(1:num_centroids),:);
+        centroids=data(random_index(1:num_centroids),:);
 
-y=centroids;
+        y=centroids;
 
+    elseif centroid_type == "custom_generated_10"
+        imagefiles = dir('generated_centroids\*.bmp');      
+        nfiles = length(imagefiles);    % Number of files found
+        images = zeros(nfiles, 785); 
+        for ii=1:nfiles
+           currentfilename = imagefiles(ii).name;
+           currentimage = imread(fullfile('generated_centroids',currentfilename));
+           images(ii,:) = [reshape(currentimage.', 1, []) 0];
+        end
+        
+        y = images;
+    end
 end
-
 %% Function to pick the Closest Centroid using norm/distance
 % This function takes two arguments, a vector and a set of centroids
 % It returns the index of the assigned centroid and the distance between
