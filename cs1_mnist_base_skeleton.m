@@ -134,9 +134,61 @@ end
 % First parameter is a dataset. This dataset should have no outliers. The
 % second parameter is the maximum k that you want to test. The 3rd paramter
 % is the number of iterations
-distance = elbow_method(train, 20, 10);
-figure()
+distance = elbow_method(train, 15, 10);
+figure();
 plot(distance);
+ylabel("SSD");
+xlabel("Number of centroids");
+
+%% Adding all rows of the train dataset together
+sum_all_rows = sum(train(:,1:784));
+outliers_filter = isoutlier(sum_all_rows);
+inliers_filter = ~outliers_filter;
+
+not_match_count_rows = zeros(1,size(test,1));
+
+for i=1:200
+    not_match_count_row = 0;
+    for j=1:784
+        if(outliers_filter(j) == 0 && test(i,j) ~= 0)
+            not_match_count_row = not_match_count_row + 1;
+        end
+    end
+    not_match_count_rows(1,i) = not_match_count_row;
+end
+
+% Uncommemt this to use the method that classify outlier to have the
+% mismatch count to be bigger than 95% of all elements in
+% "not_match_count_rows" array
+quantile_stats = quantile(not_match_count_rows,0.95);
+count_of_outliers = sum(not_match_count_rows > quantile_stats);
+% colNrs is an array contains indices of predicted outliers
+colNrs = find(not_match_count_rows >= quantile_stats);
+
+
+% We used isoutlier function given by matlab to detect outliers within the
+% "not_match_count_rows" array
+% outliers = isoutlier(not_match_count_rows);
+% colNrs is an array contains indices of predicted outliers
+% colNrs = find(outliers > 0);
+
+figure;
+colormap('gray');
+
+plotsize_outliers = ceil(sqrt(length(colNrs)));
+
+for ind=1:length(colNrs)
+    
+    outlier=test(colNrs(ind),(1:784));
+    subplot(plotsize,plotsize,ind);
+    
+    imagesc(reshape(outlier,[28 28])');
+    title(strcat('Outlier',num2str(ind)))
+
+end
+
+% Identify outliers to be image 3 (image 56th) and image 9 (image 187th). Other images are doubtfully
+% to be outliers. Surprisingly, the two methods confirmed that image 9 are outliers
 
 %% Function to initialize the centroids
 % This function randomly chooses k vectors from our training set and uses them to be our initial centroids
