@@ -83,6 +83,9 @@ end
 % Other images are doubtfully to be outliers. Surprisingly, the two methods
 % confirmed that image 9 are outliers
     
+
+
+
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;
 % FILL IN
@@ -103,7 +106,6 @@ title('Predictions');
 sum(correctlabels==predictions)
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
-% FILL IN
     norms = zeros(size(centroids,1),1);
     for i = 1:size(centroids,1)
         norms(i) = norm(data -centroids(i,:))^2;
