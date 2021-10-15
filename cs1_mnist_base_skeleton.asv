@@ -116,10 +116,9 @@ for ind=1:k
     title(strcat('Centroid ',num2str(ind)))
 
 end
-centroid_labels = [4,3,1,7,5,8,0,2,6,9];
 
 
-%% Plot the elbow method
+%% Testing
 
 % First parameter is a dataset. This dataset should have no outliers. The
 % second parameter is the maximum k that you want to test. The 3rd paramter
@@ -127,7 +126,7 @@ centroid_labels = [4,3,1,7,5,8,0,2,6,9];
 distance = elbow_method(train, 15, 10);
 figure();
 plot(distance);
-title("The Elbows method");
+title("
 ylabel("SSD");
 xlabel("Number of centroids");
 
