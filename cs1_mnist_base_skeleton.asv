@@ -3,7 +3,7 @@ clear all;
 close all;
 %%
 
-c0 = reshape(imread('generated_centroids/0.bmp').', 1, []);
+%c0 = reshape(imread('generated_centroids/0.bmp').', 1, []);
 
 
 %% In this script, you need to implement three functions as part of the k-means algorithm.
@@ -66,7 +66,7 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k= 15; % set k
+k= 10; % set k
 max_iter= 20; % set the number of iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
@@ -122,10 +122,21 @@ for ind=1:k
 
 end
 
-
+centroid_labels = [0,1,2,3,4,5,6,7,8,9];
 %% Testing
 
-a = train(train(:,785)==4,:)
+train_sum = sum(train)/1500;
+figure;
+plot(train_sum)
+
+figure;
+colormap('gray');
+heatmap = reshape(train_sum(1,1:784), [28 28]);
+imagesc(heatmap'); 
+
+
+%%
+a = train(train(:,785)==4,:);
 figure;
 colormap('gray');
 plotsize = ceil(20);
@@ -146,7 +157,7 @@ end
 
     
 function y=initialize_centroids(data,num_centroids)
-    centroid_type = "default";
+    centroid_type = "custom_generated_10";
 
     if centroid_type == "default"
         random_index=randperm(size(data,1));
@@ -155,14 +166,17 @@ function y=initialize_centroids(data,num_centroids)
 
         y=centroids;
 
-    elseif centroid_type == "custom_"
+    elseif centroid_type == "custom_generated_10"
         imagefiles = dir('generated_centroids\*.bmp');      
         nfiles = length(imagefiles);    % Number of files found
+        images = zeros(nfiles, 785); 
         for ii=1:nfiles
            currentfilename = imagefiles(ii).name;
-           currentimage = imread(currentfilename);
-           images{ii} = currentimage;
+           currentimage = imread(fullfile('generated_centroids',currentfilename));
+           images(ii,:) = [reshape(currentimage.', 1, []) 0];
         end
+        
+        y = images;
     end
 end
 %% Function to pick the Closest Centroid using norm/distance

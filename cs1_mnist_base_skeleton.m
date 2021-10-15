@@ -122,10 +122,21 @@ for ind=1:k
 
 end
 
-
+centroid_labels = [1,3,4,0,8,6,7,9,0,2];
 %% Testing
 
-a = train(train(:,785)==4,:)
+train_sum = sum(train)/1500;
+figure;
+plot(train_sum)
+
+figure;
+colormap('gray');
+heatmap = reshape(train_sum(1,1:784), [28 28]);
+imagesc(heatmap'); 
+
+
+%%
+a = train(train(:,785)==4,:);
 figure;
 colormap('gray');
 plotsize = ceil(20);
