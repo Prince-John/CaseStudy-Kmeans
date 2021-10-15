@@ -52,7 +52,10 @@ title('Predictions');
 sum(correctlabels==predictions)
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
+<<<<<<< HEAD
 % FILL IN
+=======
+>>>>>>> princeDev
     norms = zeros(size(centroids,1),1);
     for i = 1:size(centroids,1)
         norms(i) = norm(data -centroids(i,:))^2;

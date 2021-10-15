@@ -1,5 +1,3 @@
-
-clear all;
 close all;
 %%
 
@@ -122,7 +120,7 @@ for ind=1:k
 
 end
 
-
+centroid_labels = [1,3,4,0,8,6,7,9,0,2];
 %% Testing
 
 % a = train(train(:,785)==4,:);
@@ -142,6 +140,16 @@ end
 distance = elbow_method(train, 20, 10);
 figure()
 plot(distance);
+
+train_sum = sum(train)/1500;
+figure;
+plot(train_sum)
+
+figure;
+colormap('gray');
+heatmap = reshape(train_sum(1,1:784), [28 28]);
+imagesc(heatmap'); 
+
 
 %% Function to initialize the centroids
 % This function randomly chooses k vectors from our training set and uses them to be our initial centroids
