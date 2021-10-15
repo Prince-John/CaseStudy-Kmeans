@@ -31,7 +31,9 @@ end
 % outliers(i) should be set to 1 if the i^th entry is an outlier
 % otherwise, outliers(i) should be 0
 % FILL IN
-
+% I use the function isoutlier() given by MATLAB. In this function, I use a
+% parameter TODO: Fill this in
+    
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;
 % FILL IN
@@ -51,5 +53,11 @@ sum(correctlabels==predictions)
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
 % FILL IN
+    norms = zeros(size(centroids,1),1);
+    for i = 1:size(centroids,1)
+        norms(i) = norm(data -centroids(i,:))^2;
+    end
+    [vec_distance, index] = min(norms);
+    return;
 end
 

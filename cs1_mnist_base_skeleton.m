@@ -53,7 +53,7 @@ test(:,785)=zeros(200,1);
 
 figure;
 colormap('gray'); % this tells MATLAB to depict the image in grayscale
-testimage = reshape(test(1,[1:784]), [28 28]);
+testimage = reshape(test(1,(1:784)), [28 28]);
 % we are reshaping the first row of 'test', columns 1-784 (since the 785th
 % column is going to be used for storing the centroid assignment.
 imagesc(testimage'); % this command plots an array as an image.  Type 'help imagesc' to learn more.
@@ -114,7 +114,7 @@ plotsize = ceil(sqrt(k));
 
 for ind=1:k
     
-    centr=centroids(ind,[1:784]);
+    centr=centroids(ind,(1:784));
     subplot(plotsize,plotsize,ind);
     
     imagesc(reshape(centr,[28 28])');
@@ -125,17 +125,23 @@ end
 
 %% Testing
 
-a = train(train(:,785)==4,:)
-figure;
-colormap('gray');
-plotsize = ceil(20);
-for i = 1:20
-  centr= a(i,:);
-  subplot(plotsize,plotsize,i);
-    
-  imagesc(reshape(centr,[28 28])');
-
-end
+% a = train(train(:,785)==4,:);
+% figure;
+% colormap('gray');
+% plotsize = ceil(20);
+% for i = 1:20
+%   centr= a(i,:);
+%   subplot(plotsize,plotsize,i);
+%     
+%   imagesc(reshape(centr,[28 28])');
+% 
+% end
+% First parameter is a dataset. This dataset should have no outliers. The
+% second parameter is the maximum k that you want to test. The 3rd paramter
+% is the number of iterations
+distance = elbow_method(train, 20, 10);
+figure()
+plot(distance);
 
 %% Function to initialize the centroids
 % This function randomly chooses k vectors from our training set and uses them to be our initial centroids
@@ -173,10 +179,13 @@ end
 % It returns the index of the assigned centroid and the distance between
 % the vector and the assigned centroid.
 
+% This function has bug. Index is not an integer but it has the same value
+% as vector distance
+
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
     norms = zeros(size(centroids,1),1);
     for i = 1:size(centroids,1)
-        norms(i) = norm(data -centroids(i,:))^2;
+        norms(i) = norm(data - centroids(i,:))^2;
     end
     [vec_distance, index] = min(norms);
     return;
@@ -196,7 +205,47 @@ function new_centroids=update_Centroids(data,K)
       centroid_vectors = data((data(:, 785)==i), 1:784); 
       new_centroids(i,:) = [mean(centroid_vectors) 0];  
     end
-    
-
 end
- 
+
+%% Function to determine the optimal number of clusters
+% This function assumes that the data set is "perfect". This also means
+% the dataset should not have any outliers. This method is also known as
+% the elbow method. The idea is to iterate the k-means algorithm for
+% certain number of times. Then it caluclates the sum-square-distance of
+% each datapoints to all centroids. The idea of having optimal numbers of
+% centroids is to have the minimal distance between a given centroids to
+% its "assumed" datapoints. Therefore, the smaller the SSD for each case of
+% a number of centroids, the better that decided number of centroids is
+% Doucmentation: https://en.wikipedia.org/wiki/Elbow_method_(clustering)
+function distance = elbow_method(train, k_max, max_iter)
+    distance = zeros(k_max,2);
+    for k=1:k_max
+        training_size = size(train,1);
+        centroids=initialize_centroids(train,k);
+        distances_to_centroids = zeros(1500,2);
+        for iter=1:max_iter
+            %assinging centroids to all the vectors
+            for i = 1:training_size
+                [centroid_index, distance_to_centroids] = assign_vector_to_centroid(train(i,:),centroids);
+                distances_to_centroids(i,2) = centroid_index;
+                distances_to_centroids(i,1) = distance_to_centroids;
+            end    
+            centroids = update_Centroids(train, k);
+        end
+        num_assignments = unique(distances_to_centroids(:,2));
+%         Unique() returns an sorted array of unique numbers within the parameter
+%         set. Therefore, it is only necessary to take the last element
+        max_assignments = num_assignments(end);
+        SSD_of_a_centroid = 0;
+%         This loop implements the Sum of Squared Distance algorithms. This
+%         algorthim is brute force, so it will be impratical if there are a
+%         lot of centroids.
+        for i=1:max_assignments
+            temp = distances_to_centroids(distances_to_centroids(:,2) == i);
+            SSD_of_a_centroid = SSD_of_a_centroid + sum(temp(:,1));
+        end
+        distance(k,1) = k;
+        distance(k,2) = SSD_of_a_centroid;
+    end
+    return;
+end 
