@@ -34,6 +34,9 @@ end
 % I use the function isoutlier() given by MATLAB. In this function, I use a
 % parameter TODO: Fill this in
     
+
+
+
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;
 % FILL IN
@@ -52,10 +55,6 @@ title('Predictions');
 sum(correctlabels==predictions)
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
-<<<<<<< HEAD
-% FILL IN
-=======
->>>>>>> princeDev
     norms = zeros(size(centroids,1),1);
     for i = 1:size(centroids,1)
         norms(i) = norm(data -centroids(i,:))^2;
